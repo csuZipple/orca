@@ -5385,7 +5385,8 @@
           "automation": "自动化",
           "folderPathIdentity": "分支 / 文件夹路径",
           "cli": "Orca CLI",
-          "workspaceOptions": "工作区选项"
+          "workspaceOptions": "工作区选项",
+          "groupByWorkspaceName": "工作区"
         },
         "SshTargetRow": {
           "4677394048": "正在连接…",
@@ -5894,7 +5895,8 @@
               "682ed5d551": "已关闭",
               "7c2f009786": "进行中",
               "6798dc7c94": "评审中",
-              "5076efc3d2": "完成"
+              "5076efc3d2": "完成",
+              "workspaceNameMain": "项目主目录"
             }
           }
         },

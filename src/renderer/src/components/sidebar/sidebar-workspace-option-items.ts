@@ -29,6 +29,15 @@ export const GROUP_BY_OPTIONS = [
     get label() {
       return translate('auto.components.sidebar.SidebarWorkspaceOptionsMenu.2170d553cf', 'Project')
     }
+  },
+  {
+    id: 'workspace-name',
+    get label() {
+      return translate(
+        'auto.components.sidebar.SidebarWorkspaceOptionsMenu.groupByWorkspaceName',
+        'Workspace'
+      )
+    }
   }
 ] as const
 

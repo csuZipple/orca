@@ -30,6 +30,11 @@ import type {
   WorktreeGroupBy
 } from './row-types'
 import { orderMainWorktreeFirst } from './section-order'
+import {
+  WORKSPACE_NAME_GROUP_META,
+  WORKSPACE_NAME_MAIN_GROUP_KEY,
+  WORKSPACE_NAME_MAIN_GROUP_META
+} from './workspace-name-groups'
 
 /** Everything section emission reads that stays fixed for one buildRows call. */
 export type SectionAppendContext = {
@@ -91,18 +96,16 @@ export function appendOrderedGroups(
             repo,
             projectGroupDepth
           }
-        : groupBy === 'workspace-status'
+        : groupBy === 'workspace-name'
           ? (() => {
-              const workspaceStatus =
-                getWorkspaceStatusFromGroupKey(key, workspaceStatuses) ??
-                workspaceStatuses[0]?.id ??
-                'in-progress'
-              const definition = workspaceStatuses.find((status) => status.id === workspaceStatus)
-              const meta = getWorkspaceStatusVisualMeta(definition ?? workspaceStatus)
+              const meta =
+                key === WORKSPACE_NAME_MAIN_GROUP_KEY
+                  ? WORKSPACE_NAME_MAIN_GROUP_META
+                  : WORKSPACE_NAME_GROUP_META
               return {
                 type: 'header' as const,
                 key,
-                label: definition?.label ?? workspaceStatus,
+                label: group.label,
                 count: group.items.length + folderPairs.length,
                 tone: meta.tone,
                 icon: meta.icon,
@@ -121,31 +124,61 @@ export function appendOrderedGroups(
                 worktreeIds: group.items.map((worktree) => worktree.id)
               }
             })()
-          : (() => {
-              const prGroup = key.replace(/^pr:/, '') as PRGroupKey
-              const meta = PR_GROUP_META[prGroup]
-              return {
-                type: 'header' as const,
-                key,
-                label: meta.label,
-                count: group.items.length + folderPairs.length,
-                tone: meta.tone,
-                icon: meta.icon,
-                hostWorktreeCounts: getLaneHostWorktreeCounts(
-                  group.items,
-                  folderPairs,
-                  repoMap,
-                  defaultHostId
-                ),
-                hostWorktreeIds: getLaneHostWorktreeIds(
-                  group.items,
-                  folderPairs,
-                  repoMap,
-                  defaultHostId
-                ),
-                worktreeIds: group.items.map((worktree) => worktree.id)
-              }
-            })()
+          : groupBy === 'workspace-status'
+            ? (() => {
+                const workspaceStatus =
+                  getWorkspaceStatusFromGroupKey(key, workspaceStatuses) ??
+                  workspaceStatuses[0]?.id ??
+                  'in-progress'
+                const definition = workspaceStatuses.find((status) => status.id === workspaceStatus)
+                const meta = getWorkspaceStatusVisualMeta(definition ?? workspaceStatus)
+                return {
+                  type: 'header' as const,
+                  key,
+                  label: definition?.label ?? workspaceStatus,
+                  count: group.items.length + folderPairs.length,
+                  tone: meta.tone,
+                  icon: meta.icon,
+                  hostWorktreeCounts: getLaneHostWorktreeCounts(
+                    group.items,
+                    folderPairs,
+                    repoMap,
+                    defaultHostId
+                  ),
+                  hostWorktreeIds: getLaneHostWorktreeIds(
+                    group.items,
+                    folderPairs,
+                    repoMap,
+                    defaultHostId
+                  ),
+                  worktreeIds: group.items.map((worktree) => worktree.id)
+                }
+              })()
+            : (() => {
+                const prGroup = key.replace(/^pr:/, '') as PRGroupKey
+                const meta = PR_GROUP_META[prGroup]
+                return {
+                  type: 'header' as const,
+                  key,
+                  label: meta.label,
+                  count: group.items.length + folderPairs.length,
+                  tone: meta.tone,
+                  icon: meta.icon,
+                  hostWorktreeCounts: getLaneHostWorktreeCounts(
+                    group.items,
+                    folderPairs,
+                    repoMap,
+                    defaultHostId
+                  ),
+                  hostWorktreeIds: getLaneHostWorktreeIds(
+                    group.items,
+                    folderPairs,
+                    repoMap,
+                    defaultHostId
+                  ),
+                  worktreeIds: group.items.map((worktree) => worktree.id)
+                }
+              })()
 
     result.push(header)
     if (!isCollapsed) {

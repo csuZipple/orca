@@ -5385,7 +5385,8 @@
           "automation": "オートメーション",
           "folderPathIdentity": "ブランチ / フォルダーパス",
           "cli": "Orca CLI",
-          "workspaceOptions": "ワークスペースのオプション"
+          "workspaceOptions": "ワークスペースのオプション",
+          "groupByWorkspaceName": "ワークスペース"
         },
         "SshTargetRow": {
           "4677394048": "接続中…",
@@ -5894,7 +5895,8 @@
               "682ed5d551": "クローズ",
               "7c2f009786": "進行中",
               "6798dc7c94": "レビュー中",
-              "5076efc3d2": "完了"
+              "5076efc3d2": "完了",
+              "workspaceNameMain": "プロジェクトのルート"
             }
           }
         },

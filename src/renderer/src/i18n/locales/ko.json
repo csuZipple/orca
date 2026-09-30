@@ -5385,7 +5385,8 @@
           "automation": "자동화",
           "folderPathIdentity": "브랜치 / 폴더 경로",
           "cli": "Orca CLI",
-          "workspaceOptions": "워크스페이스 옵션"
+          "workspaceOptions": "워크스페이스 옵션",
+          "groupByWorkspaceName": "워크스페이스"
         },
         "SshTargetRow": {
           "4677394048": "연결 중…",
@@ -5894,7 +5895,8 @@
               "682ed5d551": "닫힘",
               "7c2f009786": "진행중",
               "6798dc7c94": "리뷰 중",
-              "5076efc3d2": "완료"
+              "5076efc3d2": "완료",
+              "workspaceNameMain": "프로젝트 루트"
             }
           }
         },

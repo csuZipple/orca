@@ -4626,7 +4626,8 @@
           "65a9820bd1": "Estados de Agents",
           "219ebf1961": "Nombre de rama",
           "folderPathIdentity": "Rama / ruta de carpeta",
-          "cli": "Orca CLI"
+          "cli": "Orca CLI",
+          "groupByWorkspaceName": "Espacio de trabajo"
         },
         "SshTargetRow": {
           "4677394048": "Conectando…",
@@ -5114,7 +5115,8 @@
               "682ed5d551": "Cerrado",
               "7c2f009786": "En curso",
               "6798dc7c94": "En revisión",
-              "5076efc3d2": "Hecho"
+              "5076efc3d2": "Hecho",
+              "workspaceNameMain": "Raíces de proyecto"
             }
           }
         },

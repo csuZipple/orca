@@ -10,6 +10,8 @@ import { exportActiveMarkdownToPdf } from './export-active-markdown'
 import type { EditorToggleValue } from './EditorViewToggle'
 import { EditorPanelShell } from './EditorPanelShell'
 import { DiffNavigationProvider } from './diff-navigation-context'
+import { useDiffSideBySidePreference } from './use-diff-side-by-side-preference'
+import { useDiffAdjacentFileNavigation } from './use-diff-adjacent-file-navigation'
 import { canUseChangesModeForFile } from './editor-panel-file-mode'
 import { getEditorPanelRenderModel } from './editor-panel-render-model'
 import { useEditorCmdSaveRequest } from './useEditorCmdSaveRequest'
@@ -105,15 +107,7 @@ function EditorPanelInner({
     },
     [clearCopiedPathToastResetTimer]
   )
-  const [sideBySide, setSideBySide] = useState(settings?.diffDefaultView === 'side-by-side')
-  const [prevDiffView, setPrevDiffView] = useState(settings?.diffDefaultView)
-
-  if (settings?.diffDefaultView !== prevDiffView) {
-    setPrevDiffView(settings?.diffDefaultView)
-    if (settings?.diffDefaultView !== undefined) {
-      setSideBySide(settings.diffDefaultView === 'side-by-side')
-    }
-  }
+  const { sideBySide, toggleSideBySide } = useDiffSideBySidePreference()
 
   const requestedChangesMode =
     !!activeFile &&
@@ -133,6 +127,7 @@ function EditorPanelInner({
     !!activeFile &&
     !fileContents[activeFile.id]?.isBinary &&
     !fileContents[activeFile.id]?.loadError
+  const navigateToAdjacentDiffFile = useDiffAdjacentFileNavigation(activeFile, isChangesMode)
   const {
     renameDialogFile,
     renameError,
@@ -332,7 +327,7 @@ function EditorPanelInner({
 
   return (
     // Why: each split pane needs an isolated bridge between its diff editor and header controls.
-    <DiffNavigationProvider>
+    <DiffNavigationProvider onNavigatePastEdge={navigateToAdjacentDiffFile}>
       <EditorPanelShell
         panelRef={setPanelRef}
         activeFile={activeFile}
@@ -356,7 +351,7 @@ function EditorPanelInner({
         onOpenPreviewToSide={handleOpenPreviewToSide}
         onOpenMarkdownPreview={handleOpenMarkdownPreview}
         onOpenContainingFolder={handleOpenContainingFolder}
-        onToggleSideBySide={() => setSideBySide((prev) => !prev)}
+        onToggleSideBySide={toggleSideBySide}
         onEditorToggleChange={handleEditorToggleChange}
         onToggleMarkdownTableOfContents={() =>
           setMarkdownTableOfContentsVisible(

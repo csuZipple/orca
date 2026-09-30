@@ -11,6 +11,7 @@ import type { SourceControlStatusRefresh } from '../sync/use-status-refresh'
 import { useSourceControlFileProjection } from './use-file-projection'
 import { useSourceControlRowOpening } from './use-row-opening'
 import type { SourceControlWorktreeContext } from './use-worktree-context'
+import { publishVisibleDiffOrder } from './visible-diff-order'
 
 /**
  * Projects git status and branch compare into the rows the panel renders, and layers the
@@ -100,6 +101,25 @@ export function useSourceControlFileListing({
     sourceControlViewMode,
     collapsedSections
   })
+  useEffect(() => {
+    if (!activeWorktreeId) {
+      return
+    }
+    const branchOrder =
+      sourceControlViewMode === 'tree'
+        ? visibleBranchTreeRows.flatMap((node) => (node.type === 'file' ? [node.entry] : []))
+        : filteredBranchEntries
+    publishVisibleDiffOrder(activeWorktreeId, {
+      statusEntries: visibleSelectionEntries.map((row) => row.entry),
+      branchEntries: branchOrder
+    })
+  }, [
+    activeWorktreeId,
+    filteredBranchEntries,
+    sourceControlViewMode,
+    visibleBranchTreeRows,
+    visibleSelectionEntries
+  ])
   const { gitHistoryState, refreshGitHistory, refreshGitHistoryRef } = useSourceControlGitHistory({
     activeRepoSettings,
     activeWorktreeId,

@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react'
 import { detectLanguage } from '@/lib/language-detect'
-import { joinPath } from '@/lib/path'
 import { useAppStore } from '@/store'
 import type {
   GitBranchChangeEntry,
@@ -8,6 +7,7 @@ import type {
 } from '../../../../../../shared/git-diff-compare-types'
 import type { GitStatusEntry } from '../../../../../../shared/git-status-types'
 import { buildActiveOpenFileSignature, buildActiveOpenRowKeys } from './active-open-file-keys'
+import { openStatusEntryDiff } from './open-status-entry-diff'
 import type { FlatEntry } from './use-selection'
 import {
   isSourceControlSplitOpenModifier,
@@ -99,27 +99,15 @@ export function useSourceControlRowOpening({
         })
         return
       }
-      const language = detectLanguage(entry.path)
-      const filePath = joinPath(worktreePath, entry.path)
-      // Why: unstaged markdown diffs open as an edit tab in Changes view (one tab per file); staged diffs still get a separate diff tab since that isn't what the editor edits.
-      if (language === 'markdown' && entry.area === 'unstaged') {
-        openFile(
-          {
-            filePath,
-            relativePath: entry.path,
-            worktreeId: activeWorktreeId,
-            language,
-            mode: 'edit'
-          },
-          { targetGroupId, preview: openAsPreview }
-        )
-        setEditorViewMode(filePath, 'changes')
-        return
-      }
-      openDiff(activeWorktreeId, filePath, entry.path, language, entry.area === 'staged', {
-        targetGroupId,
-        preview: openAsPreview
-      })
+      openStatusEntryDiff(
+        { openDiff, openFile, setEditorViewMode },
+        {
+          worktreeId: activeWorktreeId,
+          worktreePath,
+          entry,
+          options: { targetGroupId, preview: openAsPreview }
+        }
+      )
     },
     [
       activeWorktreeId,

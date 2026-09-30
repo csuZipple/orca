@@ -49,7 +49,6 @@ function restoreSections(entrySet: CombinedDiffEntrySet, viewStateKey: string): 
       setSections: (value) => {
         sections = typeof value === 'function' ? value(sections) : value
       },
-      setSideBySide: () => {},
       viewStateKey
     })
   })
@@ -110,8 +109,7 @@ describe('useCombinedDiffViewRestore deferral', () => {
       sections: loadedSections,
       sectionHeights: {},
       loadedIndices: [0],
-      scrollTop: 0,
-      sideBySide: false
+      scrollTop: 0
     })
     cleanup()
 

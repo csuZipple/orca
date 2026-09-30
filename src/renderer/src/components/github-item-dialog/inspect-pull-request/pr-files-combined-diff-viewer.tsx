@@ -6,6 +6,7 @@ import { useCombinedDiffSectionIndexMap } from '../../editor/combined-diff/resol
 import { handleCombinedDiffFileTreeNavigation } from '../../editor/combined-diff/browse-files/combined-diff-file-tree-navigation'
 import { getDiffSectionRowEstimatedHeight } from '@/components/editor/diff-section-layout'
 import type { DiffSection } from '@/components/editor/diff-section-types'
+import { useDiffSideBySidePreference } from '@/components/editor/use-diff-side-by-side-preference'
 import { getCombinedDiffBranchEntriesInTreeOrder } from '../../editor/combined-diff/browse-files/combined-diff-file-tree-filter'
 import type { CombinedDiffFileTreeEntry } from '../../editor/combined-diff/resolve-changes/combined-diff-section-identity'
 import { useAppStore } from '@/store'
@@ -33,7 +34,7 @@ import {
 type PRFilesCombinedDiffSectionsProps = PRFilesCombinedDiffViewerProps & {
   signature: string
   sideBySide: boolean
-  setSideBySide: React.Dispatch<React.SetStateAction<boolean>>
+  toggleSideBySide: () => void
   fileTreeCollapsed: boolean
   setFileTreeCollapsed: (next: boolean) => void
 }
@@ -55,7 +56,7 @@ export function PRFilesCombinedDiffViewer(
     [baseSha, files, headSha, prNumber, prRepo, repoId]
   )
   // Why: view preferences outlive a diff-set swap, so they live above the keyed subtree.
-  const [sideBySide, setSideBySide] = useState(false)
+  const { sideBySide, toggleSideBySide } = useDiffSideBySidePreference()
   const [fileTreeCollapsed, setFileTreeCollapsed] = useState(false)
   // Why: remounting on the signature retires the previous diff set's sections, loaded
   // indices, and in-flight results in one step, so nothing can leak across the swap.
@@ -65,7 +66,7 @@ export function PRFilesCombinedDiffViewer(
       {...props}
       signature={signature}
       sideBySide={sideBySide}
-      setSideBySide={setSideBySide}
+      toggleSideBySide={toggleSideBySide}
       fileTreeCollapsed={fileTreeCollapsed}
       setFileTreeCollapsed={setFileTreeCollapsed}
     />
@@ -88,7 +89,7 @@ function PRFilesCombinedDiffSections({
   onViewedChange,
   signature,
   sideBySide,
-  setSideBySide,
+  toggleSideBySide,
   fileTreeCollapsed,
   setFileTreeCollapsed
 }: PRFilesCombinedDiffSectionsProps): React.JSX.Element {
@@ -342,7 +343,7 @@ function PRFilesCombinedDiffSections({
       sideBySide={sideBySide}
       setFileTreeCollapsed={setFileTreeCollapsed}
       setAllSectionsCollapsed={setAllSectionsCollapsed}
-      setSideBySide={setSideBySide}
+      toggleSideBySide={toggleSideBySide}
       entries={entries}
       sectionIndexByKey={sectionIndexByKey}
       activeTreeSectionKey={activeTreeSectionKey}

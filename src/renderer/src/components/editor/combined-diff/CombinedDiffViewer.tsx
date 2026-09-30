@@ -89,7 +89,6 @@ export default function CombinedDiffViewer({
   })
   const preferences = useCombinedDiffViewPreferences({
     combinedDiffFileTreeVisibleByDefault: settings?.combinedDiffFileTreeVisibleByDefault,
-    diffDefaultView: settings?.diffDefaultView,
     diffShowWhitespace: settings?.diffShowWhitespace,
     diffWordWrap: settings?.diffWordWrap,
     registry,
@@ -103,7 +102,6 @@ export default function CombinedDiffViewer({
     setGeneration,
     setSectionHeights,
     setSections,
-    setSideBySide: preferences.setSideBySide,
     viewStateKey
   })
   const { loadSection, loadDeferredSection } = useCombinedDiffSectionLoader({
@@ -219,7 +217,6 @@ export default function CombinedDiffViewer({
     scrollContainerRef,
     sectionHeights,
     sections,
-    sideBySide: preferences.sideBySide,
     viewStateKey
   })
   useCombinedDiffScrollPersistence({

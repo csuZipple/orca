@@ -13,21 +13,36 @@ import {
 
 type FakeDiffEditor = editor.IStandaloneDiffEditor & {
   setLineChanges: (count: number) => void
+  setCursorLine: (line: number) => void
   fireUpdate: () => void
   goToDiff: ReturnType<typeof vi.fn>
   disposeUpdate: ReturnType<typeof vi.fn>
   containerNode: HTMLElement
 }
 
+// Changes sit on lines 10, 20, 30… of a 100-line modified model.
 function createFakeEditor(initialCount: number): FakeDiffEditor {
   let count = initialCount
+  let cursorLine = 1
   let updateCallback: (() => void) | null = null
   const disposeUpdate = vi.fn(() => {
     updateCallback = null
   })
   const containerNode = document.createElement('div')
+  // oxlint-disable-next-line typescript/consistent-type-assertions -- SAFETY: the fake implements only the diff-editor members the provider calls.
   const editor = {
-    getLineChanges: () => (count > 0 ? Array.from({ length: count }, () => ({})) : []),
+    getLineChanges: () =>
+      Array.from({ length: count }, (_, index) => ({
+        modifiedStartLineNumber: (index + 1) * 10,
+        modifiedEndLineNumber: (index + 1) * 10
+      })),
+    getModifiedEditor: () => ({
+      getPosition: () => ({ lineNumber: cursorLine, column: 1 }),
+      getModel: () => ({ getLineCount: () => 100 })
+    }),
+    setCursorLine: (line: number) => {
+      cursorLine = line
+    },
     goToDiff: vi.fn(),
     getContainerDomNode: () => containerNode,
     onDidUpdateDiff: (cb: () => void) => {
@@ -65,13 +80,13 @@ describe('DiffNavigationProvider', () => {
   let container: HTMLDivElement | null = null
   let root: Root | null = null
 
-  function mount(): void {
+  function mount(onNavigatePastEdge?: (direction: 'next' | 'previous') => boolean): void {
     container = document.createElement('div')
     document.body.appendChild(container)
     root = createRoot(container)
     act(() => {
       root?.render(
-        <DiffNavigationProvider>
+        <DiffNavigationProvider onNavigatePastEdge={onNavigatePastEdge}>
           <Probe />
           <RegistrationProbe />
         </DiffNavigationProvider>
@@ -169,5 +184,46 @@ describe('DiffNavigationProvider', () => {
 
     act(() => registration?.unregisterDiffEditor(editor))
     expect(removeSpy).toHaveBeenCalledWith('keydown', expect.any(Function), true)
+  })
+
+  it('moves within the file while a change remains in the requested direction', () => {
+    const onNavigatePastEdge = vi.fn(() => true)
+    mount(onNavigatePastEdge)
+    const editor = createFakeEditor(3)
+    act(() => registration?.registerDiffEditor(editor))
+
+    editor.setCursorLine(20)
+    act(() => captured?.goToNextDiff())
+    act(() => captured?.goToPreviousDiff())
+
+    expect(editor.goToDiff).toHaveBeenNthCalledWith(1, 'next')
+    expect(editor.goToDiff).toHaveBeenNthCalledWith(2, 'previous')
+    expect(onNavigatePastEdge).not.toHaveBeenCalled()
+  })
+
+  it('hands off to the adjacent file instead of wrapping at either edge', () => {
+    const onNavigatePastEdge = vi.fn(() => true)
+    mount(onNavigatePastEdge)
+    const editor = createFakeEditor(3)
+    act(() => registration?.registerDiffEditor(editor))
+
+    editor.setCursorLine(30)
+    act(() => captured?.goToNextDiff())
+    editor.setCursorLine(10)
+    act(() => captured?.goToPreviousDiff())
+
+    expect(onNavigatePastEdge.mock.calls).toEqual([['next'], ['previous']])
+    expect(editor.goToDiff).not.toHaveBeenCalled()
+  })
+
+  it('falls back to in-file wrap when there is no adjacent file', () => {
+    mount(() => false)
+    const editor = createFakeEditor(3)
+    act(() => registration?.registerDiffEditor(editor))
+
+    editor.setCursorLine(30)
+    act(() => captured?.goToNextDiff())
+
+    expect(editor.goToDiff).toHaveBeenCalledWith('next')
   })
 })

@@ -36,7 +36,6 @@ export function useCombinedDiffViewRestore({
   setGeneration,
   setSectionHeights,
   setSections,
-  setSideBySide,
   viewStateKey
 }: {
   entrySet: CombinedDiffEntrySet
@@ -45,7 +44,6 @@ export function useCombinedDiffViewRestore({
   setGeneration: React.Dispatch<React.SetStateAction<number>>
   setSectionHeights: React.Dispatch<React.SetStateAction<Record<number, number>>>
   setSections: React.Dispatch<React.SetStateAction<DiffSection[]>>
-  setSideBySide: React.Dispatch<React.SetStateAction<boolean>>
   viewStateKey: string
 }): CombinedDiffViewRestore {
   const {
@@ -124,7 +122,6 @@ export function useCombinedDiffViewRestore({
             }))
       setSections(restoredSections)
       setSectionHeights(cached.sectionHeights)
-      setSideBySide(combinedDiffViewPreferences.sideBySide ?? cached.sideBySide)
       loadedIndicesRef.current = new Set(
         cached.loadedIndices.filter((index) => {
           const section = restoredSections[index]
@@ -199,7 +196,6 @@ export function useCombinedDiffViewRestore({
     setGeneration,
     setSectionHeights,
     setSections,
-    setSideBySide,
     shouldAutoReloadFromGitStatus,
     treeMode,
     viewStateKey

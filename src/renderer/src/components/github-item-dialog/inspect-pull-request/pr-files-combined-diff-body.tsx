@@ -22,7 +22,7 @@ export function PRFilesCombinedDiffBody({
   sideBySide,
   setFileTreeCollapsed,
   setAllSectionsCollapsed,
-  setSideBySide,
+  toggleSideBySide,
   entries,
   sectionIndexByKey,
   activeTreeSectionKey,
@@ -56,7 +56,7 @@ export function PRFilesCombinedDiffBody({
   sideBySide: boolean
   setFileTreeCollapsed: (next: boolean) => void
   setAllSectionsCollapsed: (next: boolean) => void
-  setSideBySide: React.Dispatch<React.SetStateAction<boolean>>
+  toggleSideBySide: () => void
   entries: GitBranchChangeEntry[]
   sectionIndexByKey: Map<string, number>
   activeTreeSectionKey: string | null
@@ -94,7 +94,7 @@ export function PRFilesCombinedDiffBody({
         sideBySide={sideBySide}
         onShowFileTree={() => setFileTreeCollapsed(false)}
         onToggleAllCollapsed={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
-        onToggleSideBySide={() => setSideBySide((prev) => !prev)}
+        onToggleSideBySide={toggleSideBySide}
       />
       <div className="flex min-h-0 flex-1">
         <CombinedDiffFileTree

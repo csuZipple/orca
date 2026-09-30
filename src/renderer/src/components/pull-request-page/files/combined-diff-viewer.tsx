@@ -4,6 +4,7 @@ import type { editor as monacoEditor } from 'monaco-editor'
 import { useAppStore } from '@/store'
 import { useDocumentDarkTheme } from '@/hooks/use-document-dark-theme'
 import { DiffSectionItem } from '@/components/editor/DiffSectionItem'
+import { useDiffSideBySidePreference } from '@/components/editor/use-diff-side-by-side-preference'
 import { CombinedDiffFileTree } from '../../editor/combined-diff/browse-files/combined-diff-file-tree'
 import { useCombinedDiffSectionIndexMap } from '../../editor/combined-diff/resolve-changes/use-combined-diff-section-index-map'
 import { handleCombinedDiffFileTreeNavigation } from '../../editor/combined-diff/browse-files/combined-diff-file-tree-navigation'
@@ -103,7 +104,7 @@ export function PRFilesCombinedDiffViewer({
     [prNumber, prRepo, repoId, repoPath, sourceScope]
   )
   const [sections, setSections] = useState<DiffSection[]>([])
-  const [sideBySide, setSideBySide] = useState(false)
+  const { sideBySide, toggleSideBySide } = useDiffSideBySidePreference()
   const [fileTreeCollapsed, setFileTreeCollapsed] = useState(false)
   const [sectionHeights, setSectionHeights] = usePRFileSectionHeights(entrySignature)
   const [activeTreeSectionKey, setActiveTreeSectionKey] = usePRFileActiveSection(entrySignature)
@@ -135,7 +136,6 @@ export function PRFilesCombinedDiffViewer({
       loadingIndicesRef.current.clear()
       setSections(restoredSections)
       setSectionHeights(cached.sectionHeights)
-      setSideBySide(cached.sideBySide)
       setFileTreeCollapsed(cached.fileTreeCollapsed)
       setActiveTreeSectionKey(cached.activeTreeSectionKey)
       pendingRestoreScrollTopRef.current =
@@ -224,7 +224,6 @@ export function PRFilesCombinedDiffViewer({
     viewStateKey,
     entrySignature,
     sectionHeights,
-    sideBySide,
     fileTreeCollapsed,
     activeTreeSectionKey: visibleActiveTreeSectionKey,
     loadedIndicesRef,
@@ -315,7 +314,7 @@ export function PRFilesCombinedDiffViewer({
         sideBySide={sideBySide}
         onShowFileTree={() => setFileTreeCollapsed(false)}
         onToggleAllCollapsed={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
-        onToggleSideBySide={() => setSideBySide((prev) => !prev)}
+        onToggleSideBySide={toggleSideBySide}
       />
       <div className="flex min-h-0 flex-1">
         <CombinedDiffFileTree

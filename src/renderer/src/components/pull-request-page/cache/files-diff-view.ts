@@ -6,7 +6,6 @@ export type CachedPRFilesDiffViewState = {
   sectionHeights: Record<number, number>
   loadedIndices: number[]
   scrollTop: number
-  sideBySide: boolean
   fileTreeCollapsed: boolean
   activeTreeSectionKey: string | null
 }

@@ -9,7 +9,6 @@ export function usePRFilesDiffViewPersistence(args: {
   viewStateKey: string
   entrySignature: string
   sectionHeights: Record<number, number>
-  sideBySide: boolean
   fileTreeCollapsed: boolean
   activeTreeSectionKey: string | null
   loadedIndicesRef: MutableRefObject<Set<number>>
@@ -32,7 +31,6 @@ export function usePRFilesDiffViewPersistence(args: {
         (index) => !args.sections[index]?.loading
       ),
       scrollTop: preservedScrollTop,
-      sideBySide: args.sideBySide,
       fileTreeCollapsed: args.fileTreeCollapsed,
       activeTreeSectionKey: args.activeTreeSectionKey
     })
@@ -45,7 +43,6 @@ export function usePRFilesDiffViewPersistence(args: {
     args.scrollContainerRef,
     args.sectionHeights,
     args.sections,
-    args.sideBySide,
     args.viewStateKey
   ])
 

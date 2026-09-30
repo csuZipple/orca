@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import type { editor } from 'monaco-editor'
 import { diffViewStateCache } from '@/lib/scroll-cache'
+import { clearDiffLanding, getDiffChangeAnchorLine, peekDiffLanding } from './diff-change-edge'
 
 type DiffViewerFirstChangeAutoScrollInput = {
   diffEditorRef: RefObject<editor.IStandaloneDiffEditor | null>
@@ -11,7 +12,7 @@ type DiffViewerFirstChangeAutoScrollInput = {
 }
 
 /**
- * Centers the viewport on a diff's first change, once per modelKey.
+ * Centers the viewport on a diff's first change (or the last, after a cross-file previous-change jump), once per modelKey.
  *
  * Why: lives outside handleMount so it sequences after the comment decorator's
  * view zones, which would otherwise shift the measured content downward.
@@ -37,10 +38,12 @@ export function useDiffViewerFirstChangeAutoScroll({
     if (didAutoScrollFirstDiffRef.current) {
       return
     }
-    if (diffViewStateCache.get(modelKey)) {
+    // Why: a cross-file change jump must land on its edge even when the file has a remembered scroll.
+    const landing = peekDiffLanding(modelKey)
+    if (!landing && diffViewStateCache.get(modelKey)) {
       return
     }
-    if (pendingScrollCommentId) {
+    if (!landing && pendingScrollCommentId) {
       // Why: decorator owns this scroll, so set the one-shot flag; else we'd re-run and overwrite it when pendingScroll flips back to null.
       didAutoScrollFirstDiffRef.current = true
       return
@@ -54,7 +57,13 @@ export function useDiffViewerFirstChangeAutoScroll({
       if (!changes || changes.length === 0) {
         return
       }
-      const line = Math.max(1, changes[0].modifiedStartLineNumber)
+      const lastChange = changes.at(-1)
+      const line = Math.max(
+        1,
+        landing === 'last' && lastChange
+          ? getDiffChangeAnchorLine(lastChange)
+          : changes[0].modifiedStartLineNumber
+      )
       // Defer one frame so view zones are laid out before measuring; cancel any earlier rAF to avoid a redundant scroll.
       if (rafId !== null) {
         cancelAnimationFrame(rafId)
@@ -69,6 +78,10 @@ export function useDiffViewerFirstChangeAutoScroll({
         modifiedEditor.setPosition({ lineNumber: line, column: 1 })
         modifiedEditor.setScrollTop(Math.max(0, top - editorHeight / 2))
         didAutoScrollFirstDiffRef.current = true
+        if (landing) {
+          clearDiffLanding()
+          modifiedEditor.focus()
+        }
       })
     }
     // Run now if the diff is ready; otherwise onDidUpdateDiff fires once the computation lands.

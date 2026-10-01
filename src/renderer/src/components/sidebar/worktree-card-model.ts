@@ -23,6 +23,8 @@ export type WorktreeCardProps = {
   revealHighlightTone?: 'default' | 'ai'
   selectedWorktrees?: readonly Worktree[]
   hideRepoBadge?: boolean
+  /** Section key when grouped by workspace name, so the card can drop identity the header already shows. */
+  workspaceNameLaneKey?: string
   hostContextLabel?: string
   inPinnedSection?: boolean
   activationRowKey?: string

@@ -8,6 +8,7 @@ import { useWorktreeCardLinkedDetails } from './use-worktree-card-linked-details
 import { useWorktreeCardReviewDetails } from './use-worktree-card-review-details'
 import { useWorktreeCardSecondaryDetails } from './use-worktree-card-secondary-details'
 import { useWorktreeCardWorkspaceActions } from './use-worktree-card-workspace-actions'
+import { getWorkspaceNameLaneCardIdentity } from './worktree-card-workspace-name-lane'
 
 export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
   const { worktree, repo } = props
@@ -140,11 +141,28 @@ export function useWorktreeCardController(props: ResolvedWorktreeCardProps) {
     settings: foundation.settings
   })
 
+  const laneIdentity = review.isFolder
+    ? null
+    : getWorkspaceNameLaneCardIdentity({
+        laneKey: props.workspaceNameLaneKey,
+        visibleCardTitle: linked.visibleCardTitle,
+        branch: review.branch,
+        repoName: repo?.displayName
+      })
+
   return {
     ...props,
     ...foundation,
     ...review,
     ...linked,
+    ...(laneIdentity
+      ? {
+          visibleCardTitle: laneIdentity.title,
+          hideRepoBadge: props.hideRepoBadge || laneIdentity.hideRepoBadge,
+          showIdentityInNewCard: review.showIdentityInNewCard && !laneIdentity.hideBranch
+        }
+      : {}),
+    hideBranchIdentity: laneIdentity?.hideBranch ?? false,
     detailsHoverControl,
     showStatus,
     showIssue,

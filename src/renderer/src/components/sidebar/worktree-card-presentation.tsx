@@ -27,6 +27,7 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
     isFolder,
     detachedHeadDisplay,
     branch,
+    hideBranchIdentity,
     identityDisplay,
     folderMetaRowContent,
     showIdentityInNewCard,
@@ -81,6 +82,7 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
   const showDetachedHeadInMetaRow = !compactCards && !isFolder && detachedHeadDisplay !== null
   const showBranch =
     !isFolder &&
+    !hideBranchIdentity &&
     branch.length > 0 &&
     !newCardStyle &&
     (!compactCards || branch !== worktree.displayName)
@@ -92,8 +94,12 @@ export function buildWorktreeCardPresentation(card: WorktreeCardController) {
   // Why: the slot owns the unread/status lane; legacy keeps the bell toggle, the new card keeps the glyph passive.
   const showCombinedStatusSlot = showStatus
   const showTitleRowPrimary = compactCards && worktree.isMainWorktree && !isFolder
-  const showMetaRowDetails = !newCardStyle && !compactCards && (hasDetails || hasPorts)
-  const showTitleRowIndicators = (newCardStyle || compactCards) && (hasDetails || hasPorts)
+  // Why: with the lane header naming the branch, the detailed card's second row would hold only these icons.
+  const liftDetailsToTitleRow = hideBranchIdentity && !newCardStyle && !compactCards
+  const showMetaRowDetails =
+    !newCardStyle && !compactCards && !liftDetailsToTitleRow && (hasDetails || hasPorts)
+  const showTitleRowIndicators =
+    (newCardStyle || compactCards || liftDetailsToTitleRow) && (hasDetails || hasPorts)
   // Why: grouped views can hide the repo badge; don't reserve a blank metadata lane unless there's real content.
   const hasDetailedMetaRowContent = Boolean(
     (showRepoBadgeInMetaRow && repo) ||

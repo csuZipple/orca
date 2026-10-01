@@ -1,4 +1,5 @@
 import type { ComposerAsyncModel } from './async-model'
+import type { ComposerCompanionRepoModel } from './companion-repo-selection'
 import type { ComposerDerivedModel } from './derived-model'
 import type { ComposerIdentityModel } from './identity-model'
 import type { ComposerInitialTargetModel } from './initial-target-model'
@@ -16,6 +17,7 @@ export type ComposerTargetModel = ComposerTargetStoreModel &
   ComposerIdentityModel &
   ComposerAsyncModel &
   ComposerProviderSyncModel &
-  ComposerDerivedModel
+  ComposerDerivedModel &
+  ComposerCompanionRepoModel
 
 export type ComposerModel = ComposerTargetModel & ComposerSourceModel & ComposerSubmitModel

@@ -190,6 +190,7 @@ export function useComposerSubmitOrchestration(
   })
   const quickCreationExecution = useQuickCreationExecution({
     clearNewWorkspaceDraft: target.composerTargetStore.clearNewWorkspaceDraft,
+    companionRepoIds: target.companionRepoSelection.companionRepoIds,
     createMultiple: target.asyncComposerState.createMultiple,
     effectivePresetId: target.derivedComposerState.effectivePresetId,
     ephemeralVmRecipes: target.runtimeTargetSelection.ephemeralVmRecipes,

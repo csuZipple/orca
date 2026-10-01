@@ -46,17 +46,23 @@ function revealPendingCreation(
 ): void {
   const store = useAppStore.getState()
   const indeterminate = getWorktreeCreationIndeterminate(request)
-  store.beginPendingWorktreeCreation({
+  const entry = {
     creationId,
     phase,
-    status: 'creating',
+    status: 'creating' as const,
     startedAt: Date.now(),
     indeterminate,
     // Why: the creation surface owns the tab strip immediately. Delaying this
     // caused the real workspace tab bar to flash out when the debounce elapsed.
     loaderVisible: true,
     request
-  })
+  }
+  // Why: companions share one submit with a primary create that owns the view; stealing it would jump focus.
+  if (request.companionCreate === true) {
+    store.beginPendingWorktreeCreation(entry, { activate: false })
+    return
+  }
+  store.beginPendingWorktreeCreation(entry)
   // Why: the creation panel only renders under the terminal view (App content
   // router), so force it active so the panel is what fills the content area.
   store.setActiveView('terminal')

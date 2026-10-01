@@ -1757,7 +1757,10 @@
         "addSshHostHint": "Use an existing machine over SSH",
         "addRemoteOrcaServer": "Add Remote Orca Server",
         "addRemoteOrcaServerHint": "Pair another Orca runtime",
-        "hostConnectionFailed": "Connection failed"
+        "hostConnectionFailed": "Connection failed",
+        "alsoCreateIn": "Also create in",
+        "alsoCreateInNone": "Only this project",
+        "alsoCreateInHint": "Each project gets a workspace with the same name from its default branch. The agent and linked items stay with the first project."
       },
       "NewWorkspaceComposerModal": {
         "createWorktree": "Create worktree",

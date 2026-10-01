@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import ProjectCombobox from '@/components/new-workspace/ProjectCombobox'
 import RunTargetCombobox from '@/components/new-workspace/RunTargetCombobox'
+import RepoMultiCombobox from '@/components/ui/repo-multi-combobox'
 import { translate } from '@/i18n/i18n'
 import type {
   EphemeralVmRecipeOption,
@@ -17,6 +18,9 @@ type NewWorkspaceComposerProjectSectionProps = Pick<
   | 'projectOptions'
   | 'selectedProjectId'
   | 'onProjectChange'
+  | 'companionRepoOptions'
+  | 'companionRepoIds'
+  | 'onCompanionRepoIdsChange'
   | 'projectError'
   | 'showAddProjectButton'
   | 'projectLabel'
@@ -53,6 +57,9 @@ export function NewWorkspaceComposerProjectSection({
   projectOptions = EMPTY_PROJECT_OPTIONS,
   selectedProjectId = null,
   onProjectChange,
+  companionRepoOptions,
+  companionRepoIds,
+  onCompanionRepoIdsChange,
   projectError,
   showAddProjectButton = true,
   projectLabel,
@@ -142,6 +149,34 @@ export function NewWorkspaceComposerProjectSection({
           ) : null}
         </div>
       </div>
+      {companionRepoOptions && companionRepoOptions.length > 0 && onCompanionRepoIdsChange ? (
+        <div className="space-y-1 pt-3">
+          <label className="block text-xs font-medium text-muted-foreground">
+            {translate('auto.components.NewWorkspaceComposerCard.alsoCreateIn', 'Also create in')}
+          </label>
+          <RepoMultiCombobox
+            repos={companionRepoOptions}
+            selected={new Set(companionRepoIds)}
+            onChange={(next) => onCompanionRepoIdsChange([...next])}
+            onSelectAll={() =>
+              onCompanionRepoIdsChange(companionRepoOptions.map((repo) => repo.id))
+            }
+            allowEmpty
+            emptyLabel={translate(
+              'auto.components.NewWorkspaceComposerCard.alsoCreateInNone',
+              'Only this project'
+            )}
+          />
+          {companionRepoIds && companionRepoIds.length > 0 ? (
+            <p className="text-[11px] text-muted-foreground">
+              {translate(
+                'auto.components.NewWorkspaceComposerCard.alsoCreateInHint',
+                'Each project gets a workspace with the same name from its default branch. The agent and linked items stay with the first project.'
+              )}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
       {shouldShowRunTargetPicker ? (
         <div className="space-y-1 pt-3">
           <label className="block min-w-0 truncate text-xs font-medium text-muted-foreground">

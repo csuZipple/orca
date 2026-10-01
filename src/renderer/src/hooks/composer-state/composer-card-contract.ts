@@ -6,6 +6,8 @@ export type ComposerCardSourceProps = Pick<
   | 'repoId'
   | 'projectOptions'
   | 'selectedProjectId'
+  | 'companionRepoOptions'
+  | 'companionRepoIds'
   | 'selectedRepoIsGit'
   | 'projectHostSetupOptions'
   | 'selectedProjectHostSetupId'
@@ -59,6 +61,7 @@ export type ComposerCardSourceProps = Pick<
 export type ComposerCardActionProps = {
   onRepoChange: ComposerModel['handleRepoChange']
   onProjectChange: ComposerModel['handleProjectChange']
+  onCompanionRepoIdsChange: ComposerModel['setCompanionRepoIds']
   onProjectHostSetupChange: ComposerModel['handleProjectHostSetupChange']
   onEphemeralVmRecipeChange: ComposerModel['setSelectedEphemeralVmRecipeId']
   repoBackedSearchRepos?: ComposerModel['eligibleRepos']

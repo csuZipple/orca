@@ -1627,7 +1627,10 @@
         "defaultBranchUpdateFailed": "プロジェクトのデフォルトブランチを更新できませんでした。再試行。",
         "setLocation": "プロジェクトの場所を設定する",
         "setLocationOnHost": "プロジェクトの場所を {{host}} に設定します",
-        "setLocationTooltip": "フォルダーを選択するか、このプロジェクトを {{host}} に複製します。"
+        "setLocationTooltip": "フォルダーを選択するか、このプロジェクトを {{host}} に複製します。",
+        "alsoCreateIn": "同時に作成",
+        "alsoCreateInNone": "このプロジェクトのみ",
+        "alsoCreateInHint": "各プロジェクトのデフォルトブランチから同じ名前のワークスペースを作成します。Agent とリンクされた項目は最初のプロジェクトにのみ適用されます。"
       },
       "NewWorkspaceComposerModal": {
         "createWorktree": "ワークツリーを作成する",

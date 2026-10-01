@@ -19,6 +19,7 @@ import type { SshConnectionStatus } from '../../../../shared/ssh-types'
 import type { TaskSourceContext } from '../../../../shared/task-source-context'
 import type { TuiAgent } from '../../../../shared/tui-agent'
 import type { ExecutionHostId } from '../../../../shared/execution-host'
+import type { Repo } from '../../../../shared/repo-types'
 
 export type RepoOption = React.ComponentProps<typeof RepoCombobox>['repos'][number]
 export type EphemeralVmRecipeOption = NonNullable<OrcaHooks['environmentRecipes']>[number]
@@ -43,6 +44,10 @@ export type NewWorkspaceComposerCardProps = {
   selectedRepoIsGit: boolean
   onRepoChange: (value: string) => void
   onProjectChange: (value: string) => void
+  /** Other local git repos that can get the same-named workspace in this submit. */
+  companionRepoOptions?: readonly Repo[]
+  companionRepoIds?: readonly string[]
+  onCompanionRepoIdsChange?: (repoIds: readonly string[]) => void
   projectHostSetupOptions?: ProjectHostSetupOption[]
   selectedProjectHostSetupId?: string | null
   onProjectHostSetupChange?: (setupId: string) => void

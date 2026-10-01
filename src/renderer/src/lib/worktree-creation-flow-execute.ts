@@ -151,6 +151,7 @@ export async function executeWorktreeCreation(
   // the entry guard keeps a cancelled create from being revived.
   const completionState = useAppStore.getState()
   const shouldActivateOnCompletion =
+    preparedRequest.companionCreate !== true &&
     completionState.pendingWorktreeCreations[creationId] !== undefined &&
     (isPendingCreationSurfaceVisible(creationId) ||
       (completionState.activeView === 'terminal' &&

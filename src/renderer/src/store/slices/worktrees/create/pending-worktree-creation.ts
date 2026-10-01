@@ -7,10 +7,11 @@ export function createBeginPendingWorktreeCreation(
   set: WorktreeSliceSet,
   _get: WorktreeSliceGet
 ): WorktreeSlice['beginPendingWorktreeCreation'] {
-  return (entry) => {
+  return (entry, options) => {
     set((s) => ({
       pendingWorktreeCreations: { ...s.pendingWorktreeCreations, [entry.creationId]: entry },
-      activePendingCreationId: entry.creationId
+      activePendingCreationId:
+        options?.activate === false ? s.activePendingCreationId : entry.creationId
     }))
   }
 }

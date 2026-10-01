@@ -10,6 +10,7 @@ import { useComposerAsyncState } from './async-composer-state'
 import { useComposerProviderRuntimeSync } from './provider-runtime-sync'
 import { useDerivedComposerState } from './derived-composer-state'
 import { useDraftTargetSync } from './draft-target-sync'
+import { useCompanionRepoSelection } from './companion-repo-selection'
 
 export function useComposerTargetState(
   options: ComposerStateInput,
@@ -181,6 +182,13 @@ export function useComposerTargetState(
     taskSourceContext: sourceContextState.taskSourceContext,
     tuiAgent: workspaceIdentityState.tuiAgent
   })
+  const companionRepoSelection = useCompanionRepoSelection({
+    eligibleRepos: composerTargetStore.eligibleRepos,
+    repoId: initialTargetState.repoId,
+    selectedRepoIsGit: runtimeTargetSelection.selectedRepoIsGit,
+    selectedRepoIsRemote: runtimeTargetSelection.selectedRepoIsRemote,
+    isProjectGroupTarget: runtimeTargetSelection.isProjectGroupTarget
+  })
   return {
     composerTargetStore,
     initialTargetState,
@@ -189,6 +197,7 @@ export function useComposerTargetState(
     workspaceIdentityState,
     asyncComposerState,
     providerRuntimeSync,
-    derivedComposerState
+    derivedComposerState,
+    companionRepoSelection
   }
 }

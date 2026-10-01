@@ -545,6 +545,22 @@ describe('staged background worktree creation', () => {
     })
   })
 
+  it('runs a companion create in the background without taking the view or activating', async () => {
+    store.activeView = 'terminal'
+    store.activePendingCreationId = null
+    store.pendingWorktreeCreations = {}
+    store.createWorktree.mockResolvedValueOnce({ worktree: { id: 'wt-2', repoId: 'repo-2' } })
+
+    runBackgroundWorktreeCreation(makeRequest({ repoId: 'repo-2', companionCreate: true }))
+    await vi.waitFor(() => expect(store.removePendingWorktreeCreation).toHaveBeenCalled())
+
+    expect(store.beginPendingWorktreeCreation).toHaveBeenCalledWith(expect.any(Object), {
+      activate: false
+    })
+    expect(store.setActiveView).not.toHaveBeenCalled()
+    expect(activateAndRevealWorktree).not.toHaveBeenCalled()
+  })
+
   it('reveals a backend-owned startup after the user switches workspaces', async () => {
     let resolveCreate!: (result: {
       worktree: { id: string; repoId: string }

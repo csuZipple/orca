@@ -30,12 +30,19 @@ type RepoMultiComboboxProps = {
   onSelectAll: () => void
   getRepoHostLabel?: (repo: Repo) => string | null | undefined
   triggerClassName?: string
+  /** Optional pickers (e.g. "also create in") may clear every repo; the label then shows `emptyLabel`. */
+  allowEmpty?: boolean
+  emptyLabel?: string
 }
 
 function renderTriggerLabel(
   repos: readonly Repo[],
-  selected: ReadonlySet<string>
+  selected: ReadonlySet<string>,
+  emptyLabel: string | undefined
 ): React.JSX.Element {
+  if (selected.size === 0 && emptyLabel) {
+    return <span className="text-muted-foreground">{emptyLabel}</span>
+  }
   if (repos.length === 0) {
     return (
       <span className="text-muted-foreground">
@@ -78,7 +85,9 @@ export default function RepoMultiCombobox({
   onChange,
   onSelectAll,
   getRepoHostLabel,
-  triggerClassName
+  triggerClassName,
+  allowEmpty = false,
+  emptyLabel
 }: RepoMultiComboboxProps): React.JSX.Element {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -101,7 +110,7 @@ export default function RepoMultiCombobox({
         // Why: the empty selection is unreachable by design — fetch effects
         // assume at least one repo is selected, so block the click instead of
         // silently allowing a no-op state.
-        if (next.size <= 1) {
+        if (next.size <= 1 && !allowEmpty) {
           return
         }
         next.delete(repoId)
@@ -110,10 +119,14 @@ export default function RepoMultiCombobox({
       }
       onChange(next)
     },
-    [onChange, selected]
+    [allowEmpty, onChange, selected]
   )
 
   const handleSelectAll = useCallback(() => {
+    if (allSelected && allowEmpty) {
+      onChange(new Set())
+      return
+    }
     if (allSelected) {
       // Why: toggle — clicking "All projects" while everything is selected
       // collapses to a single repo. The fetch effect requires at least one
@@ -127,7 +140,7 @@ export default function RepoMultiCombobox({
       return
     }
     onSelectAll()
-  }, [allSelected, onChange, onSelectAll, repos])
+  }, [allSelected, allowEmpty, onChange, onSelectAll, repos])
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -139,7 +152,7 @@ export default function RepoMultiCombobox({
           aria-expanded={open}
           className={cn('h-8 w-full justify-between px-3 text-xs font-normal', triggerClassName)}
         >
-          {renderTriggerLabel(repos, selected)}
+          {renderTriggerLabel(repos, selected, emptyLabel)}
           <ChevronsUpDown className="size-3.5 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -197,7 +210,7 @@ export default function RepoMultiCombobox({
             </CommandEmpty>
             {filteredRepos.map((repo) => {
               const isSelected = selected.has(repo.id)
-              const isLastSelected = isSelected && selected.size <= 1
+              const isLastSelected = isSelected && selected.size <= 1 && !allowEmpty
               const detail = getRepoMultiComboboxDetail(repo, getRepoHostLabel?.(repo))
               return (
                 <CommandItem

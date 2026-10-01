@@ -115,6 +115,8 @@ export type WorktreeCreationRequest = {
   /** When the composer stays open for sequential creates, completion must not
    *  steal focus from the next workspace name field. */
   suppressTerminalFocusOnCompletion?: boolean
+  /** Same-named workspace created alongside another repo's in one submit; it never takes over the view or activates. */
+  companionCreate?: boolean
 }
 
 /** Renderer-only, session-ephemeral record of an in-flight (or failed) worktree

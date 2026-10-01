@@ -1397,7 +1397,10 @@
         "addSshHostHint": "Use an existing machine over SSH",
         "addRemoteOrcaServer": "Add Remote Orca Server",
         "addRemoteOrcaServerHint": "Pair another Orca runtime",
-        "hostConnectionFailed": "Connection failed"
+        "hostConnectionFailed": "Connection failed",
+        "alsoCreateIn": "Crear también en",
+        "alsoCreateInNone": "Solo este proyecto",
+        "alsoCreateInHint": "Cada proyecto recibe un espacio de trabajo con el mismo nombre desde su rama predeterminada. El agente y los elementos vinculados se quedan en el primer proyecto."
       },
       "NewWorkspaceComposerModal": {
         "createWorktree": "Crear worktree",

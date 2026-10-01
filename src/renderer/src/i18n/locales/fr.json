@@ -1730,7 +1730,10 @@
         "addRemoteOrcaServer": "Ajouter un serveur Orca distant",
         "addRemoteOrcaServerHint": "Appairer un autre runtime Orca",
         "hostConnectionFailed": "Échec de la connexion",
-        "defaultBranchUpdateFailed": "Impossible de mettre à jour la branche par défaut du projet. Essayer à nouveau."
+        "defaultBranchUpdateFailed": "Impossible de mettre à jour la branche par défaut du projet. Essayer à nouveau.",
+        "alsoCreateIn": "Créer aussi dans",
+        "alsoCreateInNone": "Ce projet uniquement",
+        "alsoCreateInHint": "Chaque projet reçoit un espace de travail du même nom depuis sa branche par défaut. L’agent et les éléments liés restent sur le premier projet."
       },
       "NewWorkspaceComposerModal": {
         "createWorktree": "Créer un worktree",

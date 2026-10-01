@@ -3,6 +3,7 @@ import type { ComposerModel } from './composer-model'
 type QuickCreationExecutionInput = Pick<
   ComposerModel,
   | 'clearNewWorkspaceDraft'
+  | 'companionRepoIds'
   | 'createMultiple'
   | 'effectivePresetId'
   | 'ephemeralVmRecipes'
@@ -47,10 +48,12 @@ import { buildQuickComposerStartup } from './quick-startup-plan'
 import { buildQuickCreationRequest } from './quick-creation-request'
 import type { PendingSmartGitHubSubmitResolution } from './source-selection-decisions'
 import { planAgentSessionLaunch } from '@/lib/agent-session-launch-plan'
+import { prepareCompanionCreationRequests } from './companion-creation-requests'
 
 export function useQuickCreationExecution(input: QuickCreationExecutionInput) {
   const {
     clearNewWorkspaceDraft,
+    companionRepoIds,
     createMultiple,
     effectivePresetId,
     ephemeralVmRecipes,
@@ -259,7 +262,13 @@ export function useQuickCreationExecution(input: QuickCreationExecutionInput) {
         suppressTerminalFocusOnCompletion: createMultiple
       })
 
-      if (isSubmissionCancelled()) {
+      const creationRequests = await prepareCompanionCreationRequests({
+        primary: request,
+        companionRepoIds,
+        isSubmissionCancelled
+      })
+
+      if (isSubmissionCancelled() || !creationRequests) {
         return
       }
 
@@ -267,7 +276,7 @@ export function useQuickCreationExecution(input: QuickCreationExecutionInput) {
         clearNewWorkspaceDraft()
       }
 
-      runBackgroundWorktreeCreation(request)
+      creationRequests.forEach(runBackgroundWorktreeCreation)
 
       if (createMultiple) {
         resetForNextCreate()
@@ -277,6 +286,7 @@ export function useQuickCreationExecution(input: QuickCreationExecutionInput) {
     },
     [
       clearNewWorkspaceDraft,
+      companionRepoIds,
       createMultiple,
       effectivePresetId,
       ephemeralVmRecipes,

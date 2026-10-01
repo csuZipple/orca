@@ -1627,7 +1627,10 @@
         "defaultBranchUpdateFailed": "无法更新项目默认分支。再试一次。",
         "setLocation": "设置项目位置",
         "setLocationOnHost": "将项目位置设置为 {{host}}",
-        "setLocationTooltip": "选择一个文件夹或将此项目克隆到 {{host}} 上。"
+        "setLocationTooltip": "选择一个文件夹或将此项目克隆到 {{host}} 上。",
+        "alsoCreateIn": "同时创建于",
+        "alsoCreateInNone": "仅当前项目",
+        "alsoCreateInHint": "每个项目都会从各自的默认分支创建同名工作区。Agent 和关联的 Issue/PR 只作用于第一个项目。"
       },
       "NewWorkspaceComposerModal": {
         "createWorktree": "创建工作树",
